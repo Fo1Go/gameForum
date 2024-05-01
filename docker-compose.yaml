@@ -1,0 +1,37 @@
+services:
+  backend:
+    restart: always
+    container_name: backend_game_forum
+    build: ./api/
+    command: python manage.py runserver 0.0.0.0:8080
+    volumes:
+      - ./api/:/api
+    ports:
+      - 8080:8080
+    environment:
+      - POSTGRES_NAME=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    depends_on:
+      - db
+    networks:
+      - backend
+
+  db:
+    image: postgres:16.1
+    container_name: db_postgresql
+    volumes:
+      - ./data/db:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    restart: always
+    networks:
+      - backend
+
+networks:
+  backend:
+    driver: bridge
